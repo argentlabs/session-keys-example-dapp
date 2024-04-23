@@ -23,7 +23,7 @@ const OffchainSessionKeysExecute: FC<OffchainSessionKeysExecuteProps> = ({
   setLastTransactionHash,
   offchainSessionAccount,
 }) => {
-  const [transferOffchainSessionAmount, setTransferOffchainSessionAmount] = useState("");
+  const [amount, setAmount] = useState("");
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus) || !offchainSessionAccount;
 
@@ -38,10 +38,7 @@ const OffchainSessionKeysExecute: FC<OffchainSessionKeysExecuteProps> = ({
       const erc20Contract = new Contract(Erc20Abi as Abi, ETHTokenAddress, offchainSessionAccount as any);
 
       // send to same account
-      const result = await erc20Contract.transfer(
-        account.address,
-        parseInputAmountToUint256(transferOffchainSessionAmount)
-      );
+      const result = await erc20Contract.transfer(account.address, parseInputAmountToUint256(amount));
 
       setLastTransactionHash(result.transaction_hash);
       setTransactionStatus("success");
@@ -61,9 +58,9 @@ const OffchainSessionKeysExecute: FC<OffchainSessionKeysExecuteProps> = ({
         id="transfer-amount"
         name="fname"
         placeholder="Amount"
-        value={transferOffchainSessionAmount}
+        value={amount}
         disabled={!offchainSessionAccount}
-        onChange={(e) => setTransferOffchainSessionAmount(e.target.value)}
+        onChange={(e) => setAmount(e.target.value)}
       />
       <button className="bg-blue-300 p-2 rounded-lg" type="submit" disabled={buttonsDisabled}>
         Transfer with session keys

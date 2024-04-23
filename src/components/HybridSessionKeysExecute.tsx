@@ -22,7 +22,7 @@ const HybridSessionKeysExecute: FC<HybridSessionKeysExecuteProps> = ({
   setLastTransactionHash,
   sessionAccount,
 }) => {
-  const [transferOffchainSessionAmount, setTransferOffchainSessionAmount] = useState("");
+  const [amount, setAmount] = useState("");
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus) || !sessionAccount;
 
@@ -37,10 +37,7 @@ const HybridSessionKeysExecute: FC<HybridSessionKeysExecuteProps> = ({
       const erc20Contract = new Contract(Erc20Abi as Abi, ETHTokenAddress, sessionAccount as any);
 
       // send to same account
-      const result = await erc20Contract.transfer(
-        account.address,
-        parseInputAmountToUint256(transferOffchainSessionAmount)
-      );
+      const result = await erc20Contract.transfer(account.address, parseInputAmountToUint256(amount));
 
       setLastTransactionHash(result.transaction_hash);
       setTransactionStatus("success");
@@ -59,9 +56,9 @@ const HybridSessionKeysExecute: FC<HybridSessionKeysExecuteProps> = ({
         id="transfer-amount"
         name="fname"
         placeholder="Amount"
-        value={transferOffchainSessionAmount}
+        value={amount}
         disabled={!sessionAccount}
-        onChange={(e) => setTransferOffchainSessionAmount(e.target.value)}
+        onChange={(e) => setAmount(e.target.value)}
       />
       <button
         className={`${buttonsDisabled ? "opacity-30 text-white" : "bg-blue-300"} p-2 rounded-lg`}
