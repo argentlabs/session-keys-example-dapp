@@ -8,7 +8,7 @@ import { provider } from "@/constants";
 import { Status } from "@/helpers/status";
 import { useEffect, useState } from "react";
 import { Account, GatewayError, constants } from "starknet";
-import { StarknetWindowObject } from "starknetkit";
+import { StarknetWindowObject, disconnect } from "starknetkit";
 
 export default function HybridSession() {
   const [connectedWallet, setConnectedWallet] = useState<StarknetWindowObject | undefined | null>(null);
@@ -47,6 +47,15 @@ export default function HybridSession() {
 
       {connectedWallet && connectedWallet.account && (
         <>
+          <button
+            className="bg-white text-black p-2 rounded-lg absolute top-4 right-4"
+            onClick={() => {
+              disconnect();
+              setConnectedWallet(undefined);
+            }}
+          >
+            Disconnect
+          </button>
           <div>Account: {connectedWallet.account?.address}</div>
           <div>Chain: {chainId === constants.StarknetChainId.SN_SEPOLIA ? "SN_SEPOLIA" : "SN_MAIN"}</div>
           <div

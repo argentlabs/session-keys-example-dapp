@@ -10,7 +10,7 @@ import { Status } from "@/helpers/status";
 import { OffchainSessionAccountV5 } from "@argent/x-sessions";
 import { useEffect, useState } from "react";
 import { GatewayError, constants } from "starknet";
-import { StarknetWindowObject } from "starknetkit";
+import { StarknetWindowObject, disconnect } from "starknetkit";
 
 export default function OffchainSession() {
   const [connectedWallet, setConnectedWallet] = useState<StarknetWindowObject | undefined | null>(null);
@@ -52,6 +52,15 @@ export default function OffchainSession() {
 
       {connectedWallet && connectedWallet.account && (
         <>
+          <button
+            className="bg-white text-black p-2 rounded-lg absolute top-4 right-4"
+            onClick={() => {
+              disconnect();
+              setConnectedWallet(undefined);
+            }}
+          >
+            Disconnect
+          </button>
           <div>Account: {connectedWallet.account?.address}</div>
           <div>Chain: {chainId === constants.StarknetChainId.SN_SEPOLIA ? "SN_SEPOLIA" : "SN_MAIN"}</div>
           <div
