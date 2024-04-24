@@ -1,5 +1,6 @@
 import { FC, useState } from "react";
 import { Abi, Account, AccountInterface, Contract } from "starknet";
+import { SignSessionError } from "@argent/x-sessions";
 
 import Erc20Abi from "../abi/ERC20.json";
 
@@ -42,7 +43,7 @@ const HybridSessionKeysExecute: FC<HybridSessionKeysExecuteProps> = ({
       setLastTransactionHash(result.transaction_hash);
       setTransactionStatus("success");
     } catch (e) {
-      console.error(e);
+      console.error((e as SignSessionError).cause);
       setTransactionStatus("idle");
     }
   };
