@@ -1,8 +1,8 @@
 "use client";
 
 import { ConnectButton } from "@/components/ConnectButton";
-import { HybridSessionKeysExecute } from "@/components/HybridSessionKeysExecute";
-import { HybridSessionKeysSign } from "@/components/HybridSessionKeysSign";
+import { SessionKeysExecute } from "@/components/SessionKeysExecute";
+import { SessionKeysSign } from "@/components/SessionKeysSign";
 import { Links } from "@/components/Links";
 import { provider } from "@/constants";
 import { Status } from "@/helpers/status";
@@ -10,14 +10,14 @@ import { useEffect, useState } from "react";
 import { Account, GatewayError, constants } from "starknet";
 import { StarknetWindowObject, disconnect } from "starknetkit";
 
-export default function HybridSession() {
+export default function Session() {
   const [connectedWallet, setConnectedWallet] = useState<StarknetWindowObject | undefined | null>(null);
   const [chainId, setChainId] = useState<string>();
 
   const [lastTransactionHash, setLastTransactionHash] = useState("");
   const [transactionStatus, setTransactionStatus] = useState<Status>("idle");
   const [transactionError, setTransactionError] = useState("");
-  const [hybridSessionAccount, setHybridSessionAccount] = useState<Account | undefined>();
+  const [sessionAccount, setSessionAccount] = useState<Account | undefined>();
 
   useEffect(() => {
     const waitTx = async () => {
@@ -71,20 +71,20 @@ export default function HybridSession() {
           <div color="##ff4848">{transactionError.toString()}</div>
 
           <div className="flex flex-col text-black max-w-96">
-            <HybridSessionKeysSign
+            <SessionKeysSign
               wallet={connectedWallet}
               setTransactionStatus={setTransactionStatus}
-              setHybridSessionAccount={setHybridSessionAccount}
+              setSessionAccount={setSessionAccount}
             />
           </div>
 
           <div className="flex flex-col text-black max-w-96">
-            <HybridSessionKeysExecute
+            <SessionKeysExecute
               account={connectedWallet.account as any}
               setTransactionStatus={setTransactionStatus}
               setLastTransactionHash={setLastTransactionHash}
               transactionStatus={transactionStatus}
-              sessionAccount={hybridSessionAccount}
+              sessionAccount={sessionAccount}
             />
           </div>
         </>
