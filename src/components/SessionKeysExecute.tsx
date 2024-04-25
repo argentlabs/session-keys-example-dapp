@@ -8,7 +8,7 @@ import { ETHTokenAddress } from "@/constants";
 import { Status } from "@/helpers/status";
 import { parseInputAmountToUint256 } from "@/helpers/token";
 
-interface HybridSessionKeysExecuteProps {
+interface SessionKeysExecuteProps {
   account: AccountInterface;
   sessionAccount: Account | undefined;
   setTransactionStatus: (status: Status) => void;
@@ -16,7 +16,7 @@ interface HybridSessionKeysExecuteProps {
   transactionStatus: Status;
 }
 
-const HybridSessionKeysExecute: FC<HybridSessionKeysExecuteProps> = ({
+const SessionKeysExecute: FC<SessionKeysExecuteProps> = ({
   account,
   setTransactionStatus,
   transactionStatus,
@@ -72,4 +72,4 @@ const HybridSessionKeysExecute: FC<HybridSessionKeysExecuteProps> = ({
   );
 };
 
-export { HybridSessionKeysExecute };
+export { SessionKeysExecute };

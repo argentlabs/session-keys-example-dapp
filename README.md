@@ -2,17 +2,17 @@
 
 This is a demo dapp for implementing Argent session keys.
 
-### Offchain session keys
-
-Working only with Argent Webwallet, require a whitelist for test and production.
-Otherwise can run only on localhost
-
-### Hybrid session keys
+### Session keys
 
 Working with Argent X and Argent Webwallet
 
 Both modes have hardcoded values and works on SEPOLIA.
 This example dapp send an ETH amount from an address to itself.
+
+### Offchain session keys
+
+Working only with Argent Webwallet, require a whitelist for test and production.
+Otherwise can run only on localhost
 
 ## Getting Started
 

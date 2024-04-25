@@ -7,10 +7,10 @@ import { Status } from "@/helpers/status";
 import { parseUnits } from "@/helpers/token";
 import { StarknetWindowObject } from "starknetkit";
 
-interface HybridSessionKeysSignProps {
+interface SessionKeysSignProps {
   wallet: StarknetWindowObject;
   setTransactionStatus: (status: Status) => void;
-  setHybridSessionAccount: (account: Account) => void;
+  setSessionAccount: (account: Account) => void;
 }
 
 const ETHFees = [
@@ -31,11 +31,7 @@ const STRKFees = [
   },
 ];
 
-const HybridSessionKeysSign: FC<HybridSessionKeysSignProps> = ({
-  wallet,
-  setTransactionStatus,
-  setHybridSessionAccount,
-}) => {
+const SessionKeysSign: FC<SessionKeysSignProps> = ({ wallet, setTransactionStatus, setSessionAccount }) => {
   const [isStarkFeeToken, setIsStarkFeeToken] = useState(false);
 
   const handleCreateSessionSubmit = async (e: React.FormEvent) => {
@@ -59,7 +55,7 @@ const HybridSessionKeysSign: FC<HybridSessionKeysSignProps> = ({
 
       /* const options: CreateSessionOptions = { wallet: wallet as StarknetWindowObjectSN, useWalletRequestMethods: true }; */
 
-      setHybridSessionAccount(
+      setSessionAccount(
         await createSessionAccount({
           provider,
           account: wallet.account,
@@ -96,4 +92,4 @@ const HybridSessionKeysSign: FC<HybridSessionKeysSignProps> = ({
   );
 };
 
-export { HybridSessionKeysSign };
+export { SessionKeysSign };
