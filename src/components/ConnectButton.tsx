@@ -6,7 +6,7 @@ import { FC, useEffect } from "react";
 interface ConnectButtonProps {
   connectors?: Connector[];
   setConnectedWallet: (wallet: any) => void;
-  setChainId: (chainId: string) => void;
+  setChainId: (chainId: constants.StarknetChainId | undefined) => void;
 }
 
 const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet, connectors }) => {
@@ -16,7 +16,7 @@ const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet,
       : await connect({
           provider,
           modalMode: "alwaysAsk",
-          webWalletUrl: "http://localhost:3005",
+          webWalletUrl: "https://web.hydrogen.argent47.net",
           argentMobileOptions: {
             dappName: "Argent | Portfolio",
             url: window.location.hostname,
@@ -25,8 +25,7 @@ const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet,
           },
         });
 
-    setConnectedWallet(wallet);
-    setChainId(await wallet?.account?.getChainId());
+    setChainId((await wallet?.account?.getChainId()) as constants.StarknetChainId);
   };
 
   useEffect(() => {
@@ -34,7 +33,7 @@ const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet,
       const { wallet } = await connect({
         provider,
         modalMode: "neverAsk",
-        webWalletUrl: "http://localhost:3005",
+        webWalletUrl: "https://web.hydrogen.argent47.net",
         argentMobileOptions: {
           dappName: "Argent | Portfolio",
           url: window.location.hostname,
@@ -44,7 +43,7 @@ const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet,
       });
 
       setConnectedWallet(wallet);
-      setChainId(await wallet?.account?.getChainId());
+      setChainId((await wallet?.account?.getChainId()) as constants.StarknetChainId);
     };
     autoConnect();
   }, []);

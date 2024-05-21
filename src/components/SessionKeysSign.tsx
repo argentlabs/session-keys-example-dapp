@@ -1,37 +1,23 @@
-import { SessionParams, createSessionAccount } from "@argent/x-sessions";
+import { OffChainSession, SessionParams, createSessionRequest, openSession } from "@argent/x-sessions";
 import { FC, useState } from "react";
-import { Account } from "starknet";
-
-import { ETHTokenAddress, provider } from "@/constants";
+import { Account, Signature, ec } from "starknet";
+import { allowedMethods, expiry, metaData, dappKey } from "@/helpers/openSessionHelper";
 import { Status } from "@/helpers/status";
-import { parseUnits } from "@/helpers/token";
 import { StarknetWindowObject } from "starknetkit";
 
 interface SessionKeysSignProps {
   wallet: StarknetWindowObject;
   setTransactionStatus: (status: Status) => void;
-  setSessionAccount: (account: Account) => void;
+  setAccountSessionSignature: (signature: string[] | Signature) => void;
+  setSessionRequest: (sessionRequest: OffChainSession) => void;
 }
 
-const ETHFees = [
-  {
-    tokenAddress: ETHTokenAddress,
-    maxAmount: parseUnits("0.1", 18).value.toString(),
-  },
-];
-
-const STRKFees = [
-  {
-    tokenAddress: "0x049d36570d4e46f48e99674bd3fcc84644ddd6b96f7c741b1562b82f9e004dc7",
-    maxAmount: "100000000000000000",
-  },
-  {
-    tokenAddress: "0x04718f5a0fc34cc1af16a1cdee98ffb20c31f5cd61d6ab07201858f4287c938d",
-    maxAmount: "200000000000000000000",
-  },
-];
-
-const SessionKeysSign: FC<SessionKeysSignProps> = ({ wallet, setTransactionStatus, setSessionAccount }) => {
+const SessionKeysSign: FC<SessionKeysSignProps> = ({
+  wallet,
+  setTransactionStatus,
+  setAccountSessionSignature,
+  setSessionRequest,
+}) => {
   const [isStarkFeeToken, setIsStarkFeeToken] = useState(false);
 
   const handleCreateSessionSubmit = async (e: React.FormEvent) => {
@@ -40,29 +26,22 @@ const SessionKeysSign: FC<SessionKeysSignProps> = ({ wallet, setTransactionStatu
       setTransactionStatus("approve");
 
       const sessionParams: SessionParams = {
-        allowedMethods: [
-          {
-            "Contract Address": ETHTokenAddress,
-            selector: "transfer",
-          },
-        ],
-        expiry: Math.floor((Date.now() + 1000 * 60 * 60 * 24) / 1000) as any,
-        metaData: {
-          projectID: "test-dapp",
-          txFees: isStarkFeeToken ? STRKFees : ETHFees,
-        },
+        allowedMethods,
+        expiry,
+        metaData: metaData(isStarkFeeToken),
+        publicDappKey: dappKey.publicKey,
       };
 
-      /* const options: CreateSessionOptions = { wallet: wallet as StarknetWindowObjectSN, useWalletRequestMethods: true }; */
+      const sessionRequest = createSessionRequest(allowedMethods, expiry, metaData(isStarkFeeToken), dappKey.publicKey);
+      setSessionRequest(sessionRequest);
 
-      setSessionAccount(
-        await createSessionAccount({
-          provider,
-          account: wallet.account,
-          sessionParams,
-          /* options, */
-        })
-      );
+      const accountSessionSignature = await openSession({
+        account: wallet.account as Account,
+        wallet: wallet as any,
+        sessionParams,
+      });
+
+      setAccountSessionSignature(accountSessionSignature);
 
       setTransactionStatus("success");
     } catch (e) {
