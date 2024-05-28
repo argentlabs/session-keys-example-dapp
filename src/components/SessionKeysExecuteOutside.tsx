@@ -2,36 +2,44 @@ import { ARGENT_BACKEND_BASE_URL, ETHTokenAddress, provider } from "@/constants"
 import { dappKey } from "@/helpers/openSessionHelper";
 import { Status } from "@/helpers/status";
 import { parseInputAmountToUint256 } from "@/helpers/token";
-import { OffChainSession, buildSessionAccount } from "@argent/x-sessions";
+import {
+  ArgentBackendSessionService,
+  OffChainSession,
+  SessionDappService,
+  buildSessionAccount,
+} from "@argent/x-sessions";
 import { FC, useState } from "react";
-import { Abi, Contract, Signature, stark } from "starknet";
+import { Abi, Calldata, Contract, RawArgs, Signature, shortString, stark } from "starknet";
 import Erc20Abi from "../abi/ERC20.json";
 
-interface SessionKeysExecuteProps {
+interface SessionKeysExecuteOutsideProps {
   address: string;
   accountSessionSignature?: string[] | Signature;
   sessionRequest?: OffChainSession;
-  setTransactionStatus: (status: Status) => void;
-  setLastTransactionHash: (tx: string) => void;
   transactionStatus: Status;
 }
 
-const SessionKeysExecute: FC<SessionKeysExecuteProps> = ({
+type OutsideExecution = {
+  contractAddress: string;
+  entrypoint: string;
+  calldata?: Calldata | RawArgs;
+};
+
+const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
   address,
   accountSessionSignature,
   sessionRequest,
-  setTransactionStatus,
   transactionStatus,
-  setLastTransactionHash,
 }) => {
   const [amount, setAmount] = useState("");
+  const [outsideExecution, setOutsideExecution] = useState<OutsideExecution | undefined>();
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus) || !accountSessionSignature;
 
   const submitSessionTransaction = async (e: React.FormEvent) => {
     try {
       e.preventDefault();
-      setTransactionStatus("pending");
+
       if (!accountSessionSignature || !sessionRequest) {
         throw new Error("No open session");
       }
@@ -56,31 +64,39 @@ const SessionKeysExecute: FC<SessionKeysExecuteProps> = ({
         amount: parseInputAmountToUint256(amount),
       });
 
-      // https://www.starknetjs.com/docs/guides/estimate_fees/#estimateinvokefee
-      const { suggestedMaxFee } = await sessionAccount.estimateInvokeFee({
-        contractAddress: ETHTokenAddress,
-        entrypoint: "transfer",
-        calldata: transferCallData.calldata,
-      });
+      const beService = new ArgentBackendSessionService(
+        dappKey.publicKey,
+        accountSessionSignature,
+        ARGENT_BACKEND_BASE_URL
+      );
 
-      // https://www.starknetjs.com/docs/guides/estimate_fees/#fee-limitation
-      const maxFee = (suggestedMaxFee * BigInt(15)) / BigInt(10);
-      // send to same account
-      const result = await erc20Contract.transfer(transferCallData.calldata, {
-        maxFee,
-      });
+      const sessionDappService = new SessionDappService(beService, await provider.getChainId(), dappKey);
 
-      setLastTransactionHash(result.transaction_hash);
-      setTransactionStatus("success");
+      const { contractAddress, entrypoint, calldata } = await sessionDappService.getOutsideExecutionCall(
+        sessionRequest,
+        stark.formatSignature(accountSessionSignature),
+        false,
+        [transferCallData],
+        address,
+        await provider.getChainId(),
+        shortString.encodeShortString("ANY_CALLER")
+      );
+
+      setOutsideExecution({ contractAddress, entrypoint, calldata });
+
+      console.log("execute from outside response", JSON.stringify({ contractAddress, entrypoint, calldata }));
     } catch (e) {
       console.error(e);
-      setTransactionStatus("idle");
     }
+  };
+
+  const copyData = () => {
+    navigator.clipboard.writeText(JSON.stringify(outsideExecution));
   };
 
   return (
     <form className="flex flex-col p-4 gap-3" onSubmit={submitSessionTransaction}>
-      <h2 className="text-white">Use session keys</h2>
+      <h2 className="text-white">Get outside execution call</h2>
       <input
         className="p-2 rounded-lg max-w-96"
         type="text"
@@ -96,10 +112,21 @@ const SessionKeysExecute: FC<SessionKeysExecuteProps> = ({
         type="submit"
         disabled={buttonsDisabled}
       >
-        Transfer with session
+        Get execution data
       </button>
+
+      {outsideExecution && (
+        <div className="flex gap-2 text-white">
+          <div className="text-wrap w-[75%]" style={{ overflowWrap: "break-word" }}>
+            {JSON.stringify(outsideExecution)}
+          </div>
+          <button className={`bg-slate-300 text-black p-2 rounded-lg min-w-24 max-w-fit`} onClick={copyData}>
+            Copy data
+          </button>
+        </div>
+      )}
     </form>
   );
 };
 
-export { SessionKeysExecute };
+export { SessionKeysExecuteOutside };
