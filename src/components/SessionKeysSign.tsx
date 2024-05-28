@@ -1,8 +1,9 @@
+import { provider } from "@/constants";
+import { allowedMethods, dappKey, expiry, metaData } from "@/helpers/openSessionHelper";
+import { Status } from "@/helpers/status";
 import { OffChainSession, SessionParams, createSessionRequest, openSession } from "@argent/x-sessions";
 import { FC, useState } from "react";
-import { Account, Signature, ec } from "starknet";
-import { allowedMethods, expiry, metaData, dappKey } from "@/helpers/openSessionHelper";
-import { Status } from "@/helpers/status";
+import { Signature } from "starknet";
 import { StarknetWindowObject } from "starknetkit";
 
 interface SessionKeysSignProps {
@@ -32,15 +33,14 @@ const SessionKeysSign: FC<SessionKeysSignProps> = ({
         publicDappKey: dappKey.publicKey,
       };
 
-      const sessionRequest = createSessionRequest(allowedMethods, expiry, metaData(isStarkFeeToken), dappKey.publicKey);
-      setSessionRequest(sessionRequest);
-
       const accountSessionSignature = await openSession({
-        account: wallet.account as Account,
+        chainId: await provider.getChainId(),
         wallet: wallet as any,
         sessionParams,
       });
 
+      const sessionRequest = createSessionRequest(allowedMethods, expiry, metaData(isStarkFeeToken), dappKey.publicKey);
+      setSessionRequest(sessionRequest);
       setAccountSessionSignature(accountSessionSignature);
 
       setTransactionStatus("success");
@@ -57,6 +57,7 @@ const SessionKeysSign: FC<SessionKeysSignProps> = ({
       <div className="flex items-center text-white gap-1">
         Use STRK fee token
         <input
+          className="max-w-96"
           type="checkbox"
           onChange={() => {
             setIsStarkFeeToken((prev) => !prev);
@@ -64,7 +65,7 @@ const SessionKeysSign: FC<SessionKeysSignProps> = ({
         />
       </div>
 
-      <button className="bg-blue-300 p-2 rounded-lg" type="submit">
+      <button className="bg-blue-300 p-2 rounded-lg max-w-96" type="submit">
         Authorize session
       </button>
     </form>

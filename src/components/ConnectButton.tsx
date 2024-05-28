@@ -1,5 +1,4 @@
 import { Connector, connect } from "starknetkit";
-import { provider } from "@/constants";
 import { constants } from "starknet";
 import { FC, useEffect } from "react";
 
@@ -7,16 +6,16 @@ interface ConnectButtonProps {
   connectors?: Connector[];
   setConnectedWallet: (wallet: any) => void;
   setChainId: (chainId: constants.StarknetChainId | undefined) => void;
+  setConnectorData: (connectorData: any) => void;
 }
 
-const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet, connectors }) => {
+const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet, connectors, setConnectorData }) => {
   const connectFn = async () => {
-    const { wallet } = connectors
-      ? await connect({ provider, connectors })
+    const res = connectors
+      ? await connect({ connectors })
       : await connect({
-          provider,
           modalMode: "alwaysAsk",
-          webWalletUrl: "https://web.hydrogen.argent47.net",
+          webWalletUrl: "http://localhost:3005",
           argentMobileOptions: {
             dappName: "Argent | Portfolio",
             url: window.location.hostname,
@@ -25,15 +24,18 @@ const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet,
           },
         });
 
-    setChainId((await wallet?.account?.getChainId()) as constants.StarknetChainId);
+    const { wallet, connectorData } = res;
+
+    setConnectedWallet(wallet);
+    setConnectorData(connectorData);
+    setChainId(connectorData?.chainId);
   };
 
   useEffect(() => {
     const autoConnect = async () => {
-      const { wallet } = await connect({
-        provider,
+      const res = await connect({
         modalMode: "neverAsk",
-        webWalletUrl: "https://web.hydrogen.argent47.net",
+        webWalletUrl: "http://localhost:3005",
         argentMobileOptions: {
           dappName: "Argent | Portfolio",
           url: window.location.hostname,
@@ -42,8 +44,10 @@ const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet,
         },
       });
 
+      const { wallet, connectorData } = res;
       setConnectedWallet(wallet);
-      setChainId((await wallet?.account?.getChainId()) as constants.StarknetChainId);
+      setConnectorData(connectorData);
+      setChainId(connectorData?.chainId);
     };
     autoConnect();
   }, []);
