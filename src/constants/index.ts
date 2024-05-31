@@ -9,3 +9,5 @@ export const provider = new RpcProvider({
 
 export const ARGENT_SESSION_SERVICE_BASE_URL =
   process.env.NEXT_PUBLIC_ARGENT_SESSION_SERVICE_BASE_URL || "https://cloud.argent-api.com/v1";
+
+export const ARGENT_WEBWALLET_URL = process.env.NEXT_PUBLIC_ARGENT_WEBWALLET_URL || "https://web.argent.xyz";
