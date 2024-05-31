@@ -9,7 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@argent/x-sessions": "^6.7.0",
+    "@argent/x-sessions": "^6.7.1",
     "get-starknet-core": "^3.2.0",
     "micro-starknet": "^0.2.3",
     "next": "14.1.4",
