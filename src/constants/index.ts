@@ -7,4 +7,5 @@ export const provider = new RpcProvider({
   chainId: constants.StarknetChainId.SN_SEPOLIA,
 });
 
-export const ARGENT_BACKEND_BASE_URL = process.env.NEXT_PUBLIC_ARGENT_BACKEND || "https://cloud.argent-api.com/v1";
+export const ARGENT_SESSION_SERVICE_BASE_URL =
+  process.env.NEXT_PUBLIC_ARGENT_SESSION_SERVICE_BASE_URL || "https://cloud.argent-api.com/v1";

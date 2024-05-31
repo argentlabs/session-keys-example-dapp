@@ -1,4 +1,4 @@
-import { ARGENT_BACKEND_BASE_URL, ETHTokenAddress, provider } from "@/constants";
+import { ARGENT_SESSION_SERVICE_BASE_URL, ETHTokenAddress, provider } from "@/constants";
 import { dappKey } from "@/helpers/openSessionHelper";
 import { Status } from "@/helpers/status";
 import { parseInputAmountToUint256 } from "@/helpers/token";
@@ -25,8 +25,8 @@ const SessionKeysExecute: FC<SessionKeysExecuteProps> = ({
   setLastTransactionHash,
 }) => {
   const [amount, setAmount] = useState("");
-
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus) || !accountSessionSignature;
+  const [error, setError] = useState<string | null>(null);
 
   const submitSessionTransaction = async (e: React.FormEvent) => {
     try {
@@ -44,7 +44,7 @@ const SessionKeysExecute: FC<SessionKeysExecuteProps> = ({
         chainId: await provider.getChainId(),
         address,
         dappKey,
-        argentBackendBaseUrl: ARGENT_BACKEND_BASE_URL,
+        argentSessionServiceBaseUrl: ARGENT_SESSION_SERVICE_BASE_URL,
       });
 
       const erc20Contract = new Contract(Erc20Abi as Abi, ETHTokenAddress, sessionAccount as any);
@@ -74,6 +74,7 @@ const SessionKeysExecute: FC<SessionKeysExecuteProps> = ({
       setTransactionStatus("success");
     } catch (e) {
       console.error(e);
+      setError((e as any).message);
       setTransactionStatus("idle");
     }
   };
@@ -98,6 +99,7 @@ const SessionKeysExecute: FC<SessionKeysExecuteProps> = ({
       >
         Transfer with session
       </button>
+      {error && <p className="text-red-500">{error}</p>}
     </form>
   );
 };
