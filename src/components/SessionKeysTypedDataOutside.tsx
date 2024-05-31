@@ -5,34 +5,29 @@ import { parseInputAmountToUint256 } from "@/helpers/token";
 import {
   ArgentBackendSessionService,
   OffChainSession,
+  OutsideExecutionTypedDataResponse,
   SessionDappService,
   buildSessionAccount,
 } from "@argent/x-sessions";
 import { FC, useState } from "react";
-import { Abi, Calldata, Contract, RawArgs, Signature, shortString, stark } from "starknet";
+import { Abi, Contract, Signature, stark } from "starknet";
 import Erc20Abi from "../abi/ERC20.json";
 
-interface SessionKeysExecuteOutsideProps {
+interface SessionKeysTypedDataOutsideProps {
   address: string;
   accountSessionSignature?: string[] | Signature;
   sessionRequest?: OffChainSession;
   transactionStatus: Status;
 }
 
-type OutsideExecution = {
-  contractAddress: string;
-  entrypoint: string;
-  calldata?: Calldata | RawArgs;
-};
-
-const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
+const SessionKeysTypedDataOutside: FC<SessionKeysTypedDataOutsideProps> = ({
   address,
   accountSessionSignature,
   sessionRequest,
   transactionStatus,
 }) => {
   const [amount, setAmount] = useState("");
-  const [outsideExecution, setOutsideExecution] = useState<OutsideExecution | undefined>();
+  const [outsideExecution, setOutsideExecution] = useState<OutsideExecutionTypedDataResponse | undefined>();
 
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus) || !accountSessionSignature;
 
@@ -73,19 +68,17 @@ const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
 
       const sessionDappService = new SessionDappService(beService, await provider.getChainId(), dappKey);
 
-      const { contractAddress, entrypoint, calldata } = await sessionDappService.getOutsideExecutionCall(
+      const { signature, outsideExecutionTypedData } = await sessionDappService.getOutsideExecutionTypedData(
         sessionRequest,
         stark.formatSignature(accountSessionSignature),
         false,
         [transferCallData],
-        address,
-        await provider.getChainId(),
-        shortString.encodeShortString("ANY_CALLER")
+        address
       );
 
-      setOutsideExecution({ contractAddress, entrypoint, calldata });
+      setOutsideExecution({ signature, outsideExecutionTypedData });
 
-      console.log("execute from outside response", JSON.stringify({ contractAddress, entrypoint, calldata }));
+      console.log("execute from outside typed data response", JSON.stringify({ signature, outsideExecutionTypedData }));
     } catch (e) {
       console.error(e);
     }
@@ -97,7 +90,7 @@ const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
 
   return (
     <form className="flex flex-col p-4 gap-3" onSubmit={submitSessionTransaction}>
-      <h2 className="text-white">Get outside execution call</h2>
+      <h2 className="text-white">Get outside typed data</h2>
       <input
         className="p-2 rounded-lg max-w-96"
         type="text"
@@ -113,7 +106,7 @@ const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
         type="submit"
         disabled={buttonsDisabled}
       >
-        Get execution data
+        Get typed data and signature
       </button>
 
       {outsideExecution && (
@@ -131,4 +124,4 @@ const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
   );
 };
 
-export { SessionKeysExecuteOutside };
+export { SessionKeysTypedDataOutside };

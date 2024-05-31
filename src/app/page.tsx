@@ -5,6 +5,7 @@ import { DeploymentData } from "@/components/DeploymentData";
 import { SessionKeysExecute } from "@/components/SessionKeysExecute";
 import { SessionKeysExecuteOutside } from "@/components/SessionKeysExecuteOutside";
 import { SessionKeysSign } from "@/components/SessionKeysSign";
+import { SessionKeysTypedDataOutside } from "@/components/SessionKeysTypedDataOutside";
 import { provider } from "@/constants";
 import { Status } from "@/helpers/status";
 import { OffChainSession } from "@argent/x-sessions";
@@ -111,13 +112,23 @@ export default function Session() {
             />
           </div>
 
-          <div className="flex flex-col text-black ">
-            <SessionKeysExecuteOutside
-              address={connectorData?.account}
-              accountSessionSignature={accountSessionSignature}
-              sessionRequest={sessionRequest}
-              transactionStatus={transactionStatus}
-            />
+          <div className="flex text-black justify-between">
+            <div className="flex flex-col text-black ">
+              <SessionKeysExecuteOutside
+                address={connectorData?.account}
+                accountSessionSignature={accountSessionSignature}
+                sessionRequest={sessionRequest}
+                transactionStatus={transactionStatus}
+              />
+            </div>
+            <div className="flex flex-col text-black ">
+              <SessionKeysTypedDataOutside
+                address={connectorData?.account}
+                accountSessionSignature={accountSessionSignature}
+                sessionRequest={sessionRequest}
+                transactionStatus={transactionStatus}
+              />
+            </div>
           </div>
         </>
       )}
