@@ -1,9 +1,9 @@
-import { ARGENT_BACKEND_BASE_URL, ETHTokenAddress, provider } from "@/constants";
+import { ARGENT_SESSION_SERVICE_BASE_URL, ETHTokenAddress, provider } from "@/constants";
 import { dappKey } from "@/helpers/openSessionHelper";
 import { Status } from "@/helpers/status";
 import { parseInputAmountToUint256 } from "@/helpers/token";
 import {
-  ArgentBackendSessionService,
+  ArgentSessionService,
   OffChainSession,
   OutsideExecutionTypedDataResponse,
   SessionDappService,
@@ -28,7 +28,7 @@ const SessionKeysTypedDataOutside: FC<SessionKeysTypedDataOutsideProps> = ({
 }) => {
   const [amount, setAmount] = useState("");
   const [outsideExecution, setOutsideExecution] = useState<OutsideExecutionTypedDataResponse | undefined>();
-
+  const [error, setError] = useState<string | null>(null);
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus) || !accountSessionSignature;
 
   const submitSessionTransaction = async (e: React.FormEvent) => {
@@ -48,7 +48,7 @@ const SessionKeysTypedDataOutside: FC<SessionKeysTypedDataOutsideProps> = ({
         chainId: await provider.getChainId(),
         address,
         dappKey,
-        argentBackendBaseUrl: ARGENT_BACKEND_BASE_URL,
+        argentSessionServiceBaseUrl: ARGENT_SESSION_SERVICE_BASE_URL,
       });
 
       const erc20Contract = new Contract(Erc20Abi as Abi, ETHTokenAddress, sessionAccount as any);
@@ -60,10 +60,10 @@ const SessionKeysTypedDataOutside: FC<SessionKeysTypedDataOutsideProps> = ({
         amount: parseInputAmountToUint256(amount),
       });
 
-      const beService = new ArgentBackendSessionService(
+      const beService = new ArgentSessionService(
         dappKey.publicKey,
         accountSessionSignature,
-        ARGENT_BACKEND_BASE_URL
+        ARGENT_SESSION_SERVICE_BASE_URL
       );
 
       const sessionDappService = new SessionDappService(beService, await provider.getChainId(), dappKey);
@@ -81,6 +81,7 @@ const SessionKeysTypedDataOutside: FC<SessionKeysTypedDataOutsideProps> = ({
       console.log("execute from outside typed data response", JSON.stringify({ signature, outsideExecutionTypedData }));
     } catch (e) {
       console.error(e);
+      setError((e as any).message);
     }
   };
 
@@ -120,6 +121,7 @@ const SessionKeysTypedDataOutside: FC<SessionKeysTypedDataOutsideProps> = ({
           </button>
         </div>
       )}
+      {error && <div className="text-red-500">{error}</div>}
     </form>
   );
 };

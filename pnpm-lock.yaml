@@ -9,8 +9,8 @@ importers:
   .:
     dependencies:
       '@argent/x-sessions':
-        specifier: ^6.7.1
-        version: 6.7.1(@scure/base@1.1.6)(@scure/bip39@1.1.1)(lodash-es@4.17.21)(object-hash@3.0.0)(react-dom@18.2.0(react@18.2.0))(react-router-dom@6.23.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(swr@1.3.0(react@18.2.0))(typescript@5.4.5)(zod@3.23.8)
+        specifier: ^6.7.2
+        version: 6.7.2(@scure/base@1.1.6)(@scure/bip39@1.1.1)(lodash-es@4.17.21)(object-hash@3.0.0)(react-dom@18.2.0(react@18.2.0))(react-router-dom@6.23.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(swr@1.3.0(react@18.2.0))(typescript@5.4.5)(zod@3.23.8)
       get-starknet-core:
         specifier: ^3.2.0
         version: 3.2.0(starknet@6.7.0)
@@ -79,8 +79,8 @@ packages:
     peerDependencies:
       typescript: ^5.0.0
 
-  '@argent/x-sessions@6.7.1':
-    resolution: {integrity: sha512-Jbw1UTs8RJrIhw8tgiVKmnRD0xOprXVRX5IYrl2Lt3cVg/m7xUaxVZIYFm+nIq3J0diIkkL3M+/iVA4DA0ev/Q==}
+  '@argent/x-sessions@6.7.2':
+    resolution: {integrity: sha512-nA24ThqAi/iVuUWVqe8rSrzfHMXkAeMJAyGmEnUQsxLdfJ0HwQ7s+DRUuBrJzpCE7SjBPDO68qqnz9jTxV5VbA==}
 
   '@argent/x-shared@1.19.8':
     resolution: {integrity: sha512-MLx5ihSDHX0AfelB8dQv4M+hj4jYDQ+MKhI4r7hgsGGGjtWBsYcswERypTvaj2JLxAtTYIVJbNp/tTVYxnVUFA==}
@@ -2433,7 +2433,7 @@ snapshots:
       dataloader: 2.2.2
       typescript: 5.4.5
 
-  '@argent/x-sessions@6.7.1(@scure/base@1.1.6)(@scure/bip39@1.1.1)(lodash-es@4.17.21)(object-hash@3.0.0)(react-dom@18.2.0(react@18.2.0))(react-router-dom@6.23.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(swr@1.3.0(react@18.2.0))(typescript@5.4.5)(zod@3.23.8)':
+  '@argent/x-sessions@6.7.2(@scure/base@1.1.6)(@scure/bip39@1.1.1)(lodash-es@4.17.21)(object-hash@3.0.0)(react-dom@18.2.0(react@18.2.0))(react-router-dom@6.23.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(swr@1.3.0(react@18.2.0))(typescript@5.4.5)(zod@3.23.8)':
     dependencies:
       '@argent/x-shared': 1.19.8(@scure/base@1.1.6)(@scure/bip39@1.1.1)(lodash-es@4.17.21)(object-hash@3.0.0)(react-dom@18.2.0(react@18.2.0))(react-router-dom@6.23.1(react-dom@18.2.0(react@18.2.0))(react@18.2.0))(react@18.2.0)(swr@1.3.0(react@18.2.0))(typescript@5.4.5)(zod@3.23.8)
       minimalistic-assert: 1.0.1

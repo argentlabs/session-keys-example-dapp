@@ -1,13 +1,8 @@
-import { ARGENT_BACKEND_BASE_URL, ETHTokenAddress, provider } from "@/constants";
+import { ARGENT_SESSION_SERVICE_BASE_URL, ETHTokenAddress, provider } from "@/constants";
 import { dappKey } from "@/helpers/openSessionHelper";
 import { Status } from "@/helpers/status";
 import { parseInputAmountToUint256 } from "@/helpers/token";
-import {
-  ArgentBackendSessionService,
-  OffChainSession,
-  SessionDappService,
-  buildSessionAccount,
-} from "@argent/x-sessions";
+import { ArgentSessionService, OffChainSession, SessionDappService, buildSessionAccount } from "@argent/x-sessions";
 import { FC, useState } from "react";
 import { Abi, Calldata, Contract, RawArgs, Signature, shortString, stark } from "starknet";
 import Erc20Abi from "../abi/ERC20.json";
@@ -33,7 +28,7 @@ const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
 }) => {
   const [amount, setAmount] = useState("");
   const [outsideExecution, setOutsideExecution] = useState<OutsideExecution | undefined>();
-
+  const [error, setError] = useState<string | null>(null);
   const buttonsDisabled = ["approve", "pending"].includes(transactionStatus) || !accountSessionSignature;
 
   const submitSessionTransaction = async (e: React.FormEvent) => {
@@ -53,7 +48,7 @@ const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
         chainId: await provider.getChainId(),
         address,
         dappKey,
-        argentBackendBaseUrl: ARGENT_BACKEND_BASE_URL,
+        argentSessionServiceBaseUrl: ARGENT_SESSION_SERVICE_BASE_URL,
       });
 
       const erc20Contract = new Contract(Erc20Abi as Abi, ETHTokenAddress, sessionAccount as any);
@@ -65,10 +60,10 @@ const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
         amount: parseInputAmountToUint256(amount),
       });
 
-      const beService = new ArgentBackendSessionService(
+      const beService = new ArgentSessionService(
         dappKey.publicKey,
         accountSessionSignature,
-        ARGENT_BACKEND_BASE_URL
+        ARGENT_SESSION_SERVICE_BASE_URL
       );
 
       const sessionDappService = new SessionDappService(beService, await provider.getChainId(), dappKey);
@@ -88,6 +83,7 @@ const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
       console.log("execute from outside response", JSON.stringify({ contractAddress, entrypoint, calldata }));
     } catch (e) {
       console.error(e);
+      setError((e as any).message);
     }
   };
 
@@ -127,6 +123,7 @@ const SessionKeysExecuteOutside: FC<SessionKeysExecuteOutsideProps> = ({
           </button>
         </div>
       )}
+      {error && <div className="text-red-500">{error}</div>}
     </form>
   );
 };
