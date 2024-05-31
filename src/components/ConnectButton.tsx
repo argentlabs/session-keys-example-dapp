@@ -1,6 +1,7 @@
 import { Connector, connect } from "starknetkit";
 import { constants } from "starknet";
 import { FC, useEffect } from "react";
+import { ARGENT_WEBWALLET_URL } from "@/constants";
 
 interface ConnectButtonProps {
   connectors?: Connector[];
@@ -15,7 +16,7 @@ const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet,
       ? await connect({ connectors })
       : await connect({
           modalMode: "alwaysAsk",
-          webWalletUrl: "http://localhost:3005",
+          webWalletUrl: ARGENT_WEBWALLET_URL,
           argentMobileOptions: {
             dappName: "Argent | Portfolio",
             url: window.location.hostname,
@@ -35,7 +36,7 @@ const ConnectButton: FC<ConnectButtonProps> = ({ setChainId, setConnectedWallet,
     const autoConnect = async () => {
       const res = await connect({
         modalMode: "neverAsk",
-        webWalletUrl: "http://localhost:3005",
+        webWalletUrl: ARGENT_WEBWALLET_URL,
         argentMobileOptions: {
           dappName: "Argent | Portfolio",
           url: window.location.hostname,
