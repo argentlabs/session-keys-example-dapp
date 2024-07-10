@@ -1,3 +1,7 @@
+# DEPRECATED
+
+Update implementation can be found on [starknetkit-example-dapp](https://github.com/argentlabs/starknetkit-example-dapp)
+
 # session-keys-example-dapp
 
 This is a demo dapp for implementing Argent session keys.
